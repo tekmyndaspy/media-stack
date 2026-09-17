@@ -11,6 +11,7 @@ x-logging: &default-logging
 
 x-global-env: &global-env
   TZ: ${TZ}
+  LOG_LEVEL: ${LOG_LEVEL}
 
 x-linuxserver-env: &linuxserver-env
   PUID: ${PUID}
