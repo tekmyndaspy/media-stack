@@ -41,25 +41,29 @@ services:
   jellyfin:
     image: jellyfin/jellyfin:latest
     container_name: jellyfin
-    user: ${PUID}:${PGID}
     restart: unless-stopped
-    <<: *default-logging
-    environment:
-      <<: *global-env
-      JELLYFIN_PublishedServerUrl: ${JELLYFIN_URL}
-    ports:
-      - "8096:8096/tcp"
-      - "7359:7359/udp"
-      - "1900:1900/udp"
+    
     volumes:
       - ./jellyfin-config:/config
       - ./jellyfin-cache:/cache
       - ${MEDIA_PATH}:${MEDIA_PATH}
     devices:
       - /dev/dri:/dev/dri
+    
+    user: ${PUID}:${PGID}
     group_add:
       - "44"
       - "992"
+    
+    ports:
+      - "8096:8096/tcp"
+      - "7359:7359/udp"
+      - "1900:1900/udp"
+    
+    environment:
+      <<: *global-env
+      JELLYFIN_PublishedServerUrl: ${JELLYFIN_URL}
+    
     healthcheck:
       test: curl -f http://localhost:8096/System/Info/Public || exit 1
       <<: *default-healthcheck
@@ -93,138 +97,187 @@ services:
 
   seerr:
     image: ghcr.io/seerr-team/seerr:latest
-    init: true
     container_name: seerr
     restart: unless-stopped
-    <<: *default-logging
-    environment:
-      <<: *global-env
-      LOG_LEVEL: debug
-      PORT: 5055
-    ports:
-      - "5055:5055"
+    init: true
+    depends_on:
+      jellyfin:
+        condition: service_healthy
+    
     volumes:
       - ./seerr-config:/app/config
-    healthcheck:
-      test: wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/settings/public || exit 1
-      <<: *default-healthcheck
+    
     security_opt:
       - no-new-privileges
     cap_drop:
       - ALL
-    depends_on:
-      jellyfin:
-        condition: service_healthy
+    
+    ports:
+      - "5055:5055"
+    
+    environment:
+      <<: *global-env
+      LOG_LEVEL: debug
+      PORT: 5055
+    
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/settings/public || exit 1
+      <<: *default-healthcheck
+    <<: *default-logging
 
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
     restart: unless-stopped
-    <<: *default-logging
-    environment:
-      <<: [*global-env, *linuxserver-env]
+    
     volumes:
       - ./sonarr-config:/config
       - ${MEDIA_PATH}:${MEDIA_PATH}
+    
     ports:
       - "8989:8989"
+    
+    environment:
+      <<: [*global-env, *linuxserver-env]
+    
     healthcheck:
       test: curl -f http://localhost:8989/ping || exit 1
       <<: *default-healthcheck
+    <<: *default-logging
 
   sonarr4k:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr4k
     restart: unless-stopped
-    <<: *default-logging
-    environment:
-      <<: [*global-env, *linuxserver-env]
+    
     volumes:
       - ./sonarr4k-config:/config
       - ${MEDIA_PATH}:${MEDIA_PATH}
+    
     ports:
       - "8990:8990"
+    
+    environment:
+      <<: [*global-env, *linuxserver-env]
+    
     healthcheck:
       test: curl -f http://localhost:8990/ping || exit 1
       <<: *default-healthcheck
+    <<: *default-logging
 
   radarr:
     image: lscr.io/linuxserver/radarr:latest
     container_name: radarr
     restart: unless-stopped
-    <<: *default-logging
-    environment:
-      <<: [*global-env, *linuxserver-env]
+    
     volumes:
       - ./radarr-config:/config
       - ${MEDIA_PATH}:${MEDIA_PATH}
+    
     ports:
       - "7878:7878"
+    
+    environment:
+      <<: [*global-env, *linuxserver-env]
+    
     healthcheck:
       test: curl -f http://localhost:7878/ping || exit 1
       <<: *default-healthcheck
+    <<: *default-logging
 
   radarr4k:
     image: lscr.io/linuxserver/radarr:latest
     container_name: radarr4k
     restart: unless-stopped
-    <<: *default-logging
-    environment:
-      <<: [*global-env, *linuxserver-env]
+    
     volumes:
       - ./radarr4k-config:/config
       - ${MEDIA_PATH}:${MEDIA_PATH}
+    
     ports:
       - "7879:7879"
+    
+    environment:
+      <<: [*global-env, *linuxserver-env]
+    
     healthcheck:
       test: curl -f http://localhost:7879/ping || exit 1
       <<: *default-healthcheck
+    <<: *default-logging
 
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
     restart: unless-stopped
-    <<: *default-logging
-    environment:
-      <<: [*global-env, *linuxserver-env]
+    depends_on:
+      <<: *arr-deps
+    
     volumes:
       - ./prowlarr-config:/config
+    
     ports:
       - "9696:9696"
+    
+    environment:
+      <<: [*global-env, *linuxserver-env]
+    
     healthcheck:
       test: curl -f http://localhost:9696/ping || exit 1
       <<: *default-healthcheck
-    depends_on:
-      <<: *arr-deps
+    <<: *default-logging
 
   profilarr:
     image: ghcr.io/dictionarry-hub/profilarr:latest
     container_name: profilarr
     restart: unless-stopped
-    <<: *default-logging
+    depends_on:
+      <<: *arr-deps
+    
+    volumes:
+      - ./profilarr-config:/config
+    
+    ports:
+      - "6868:6868"
+    
     environment:
       <<: [*global-env, *linuxserver-env]
       ORIGIN: ${PROFILARR_ORIGIN}
-    ports:
-      - "6868:6868"
-    volumes:
-      - ./profilarr-config:/config
+    
     healthcheck:
       test: curl -f http://localhost:6868/ || exit 1
       <<: *default-healthcheck
-    depends_on:
-      <<: *arr-deps
+    <<: *default-logging
 
   decluttarr:
     image: ghcr.io/manimatter/decluttarr:latest
     container_name: decluttarr
     restart: unless-stopped
-    <<: *default-logging
+    depends_on:
+      <<: *arr-deps
+    
+    volumes:
+      - ${MEDIA_PATH}:${MEDIA_PATH}
+    
     environment:
       <<: [*global-env, *linuxserver-env]
-      LOG_LEVEL: INFO
       TEST_RUN: "False"
       TIMER: 10
+
+      SONARR: >
+        - base_url: "http://sonarr:8989"
+          api_key: "${SONARR_API_KEY}"
+        - base_url: "http://sonarr4k:8990"
+          api_key: "${SONARR4K_API_KEY}"
+      RADARR: >
+        - base_url: "http://radarr:7878"
+          api_key: "${RADARR_API_KEY}"
+        - base_url: "http://radarr4k:7879"
+          api_key: "${RADARR4K_API_KEY}"
+      QBITTORRENT: >
+        - base_url: "${QBITTORRENT_URL}"
+          username: "${QBITTORRENT_USER}"
+          password: "${QBITTORRENT_PASS}"
+          name: "qBittorrent"
 
       REMOVE_BAD_FILES: "True"
       REMOVE_FAILED_DOWNLOADS: "True"
@@ -239,27 +292,7 @@ services:
       SEARCH_MISSING: "True"
       DETECT_DELETIONS: "True"
 
-      SONARR: >
-        - base_url: "http://sonarr:8989"
-          api_key: "${SONARR_API_KEY}"
-        - base_url: "http://sonarr4k:8990"
-          api_key: "${SONARR4K_API_KEY}"
-
-      RADARR: >
-        - base_url: "http://radarr:7878"
-          api_key: "${RADARR_API_KEY}"
-        - base_url: "http://radarr4k:7879"
-          api_key: "${RADARR4K_API_KEY}"
-
-      QBITTORRENT: >
-        - base_url: "${QBITTORRENT_URL}"
-          username: "${QBITTORRENT_USER}"
-          password: "${QBITTORRENT_PASS}"
-          name: "qBittorrent"
-    volumes:
-      - ${MEDIA_PATH}:${MEDIA_PATH}
     healthcheck:
       test: pgrep -f python || exit 1
       <<: *default-healthcheck
-    depends_on:
-      <<: *arr-deps
+    <<: *default-logging
