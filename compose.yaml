@@ -256,15 +256,15 @@ services:
       <<: *default-healthcheck
     <<: *default-logging
 
-  tunarr-anime:
+  tunarr:
     image: chrisbenincasa/tunarr:latest
-    container_name: tunarr-anime
+    container_name: tunarr
     restart: unless-stopped
     profiles:
-      - tunarr-anime
+      - tunarr
     
     volumes:
-      - ./tunarr-anime-config:/config/tunarr
+      - ./tunarr-config:/config/tunarr
     devices:
       - /dev/dri:/dev/dri
     
