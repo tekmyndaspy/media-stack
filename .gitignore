@@ -1,0 +1,11 @@
+jellyfin-cache
+jellyfin-config
+profilarr-config
+prowlarr-config
+radarr-config
+radarr4k-config
+seerr-config
+sonarr-config
+sonarr4k-config
+tunarr-anime-config
+.env
