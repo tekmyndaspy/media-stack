@@ -28,6 +28,26 @@ x-healthcheck-timing: &default-healthcheck
 # Services
 
 services:
+  # Upstream acquisition support
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    restart: unless-stopped
+    
+    volumes:
+      - ./prowlarr-config:/config
+    
+    ports:
+      - "9696:9696"
+    
+    environment:
+      <<: [*common-env, *linuxserver-env]
+    
+    healthcheck:
+      test: curl -f http://localhost:9696/ping || exit 1
+      <<: *default-healthcheck
+    <<: *default-logging
+
   # Core acquisition
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
@@ -108,26 +128,8 @@ services:
       test: curl -f http://localhost:7879/ping || exit 1
       <<: *default-healthcheck
     <<: *default-logging
-  
+
   # Supporting acquisition services
-  prowlarr:
-    image: lscr.io/linuxserver/prowlarr:latest
-    container_name: prowlarr
-    restart: unless-stopped
-    
-    volumes:
-      - ./prowlarr-config:/config
-    
-    ports:
-      - "9696:9696"
-    
-    environment:
-      <<: [*common-env, *linuxserver-env]
-    
-    healthcheck:
-      test: curl -f http://localhost:9696/ping || exit 1
-      <<: *default-healthcheck
-    <<: *default-logging
 
   profilarr:
     image: ghcr.io/dictionarry-hub/profilarr:latest
