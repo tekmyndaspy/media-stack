@@ -38,93 +38,7 @@ x-healthcheck-timing: &default-healthcheck
 # Services
 
 services:
-  jellyfin:
-    image: jellyfin/jellyfin:latest
-    container_name: jellyfin
-    restart: unless-stopped
-    
-    volumes:
-      - ./jellyfin-config:/config
-      - ./jellyfin-cache:/cache
-      - ${MEDIA_PATH}:${MEDIA_PATH}
-    devices:
-      - /dev/dri:/dev/dri
-    
-    user: ${PUID}:${PGID}
-    group_add:
-      - "44"
-      - "992"
-    
-    ports:
-      - "8096:8096/tcp"
-      - "7359:7359/udp"
-      - "1900:1900/udp"
-    
-    environment:
-      <<: *common-env
-      JELLYFIN_PublishedServerUrl: ${JELLYFIN_URL}
-    
-    healthcheck:
-      test: curl -f http://localhost:8096/System/Info/Public || exit 1
-      <<: *default-healthcheck
-    <<: *default-logging
-
-#  tunarr-anime:
-#    image: chrisbenincasa/tunarr:latest
-#    container_name: tunarr-anime
-#    restart: unless-stopped
-#    
-#    volumes:
-#      - ./tunarr-anime-config:/config/tunarr
-#    devices:
-#      - /dev/dri:/dev/dri
-#    
-#    group_add:
-#      - "44"
-#      - "992"
-#    
-#    ports:
-#      - 8000:8000
-#    
-#    environment:
-#      <<: *common-env
-#      LOG_LEVEL: ${LOG_LEVEL}
-#
-#    healthcheck:
-#      test: curl -f http://localhost:8000/api/version || exit 1
-#      <<: *default-healthcheck
-#    <<: *default-logging
-
-  seerr:
-    image: ghcr.io/seerr-team/seerr:latest
-    container_name: seerr
-    restart: unless-stopped
-    init: true
-    depends_on:
-      jellyfin:
-        condition: service_healthy
-    
-    volumes:
-      - ./seerr-config:/app/config
-    
-    security_opt:
-      - no-new-privileges
-    cap_drop:
-      - ALL
-    
-    ports:
-      - "5055:5055"
-    
-    environment:
-      <<: *common-env
-      LOG_LEVEL: debug
-      PORT: 5055
-    
-    healthcheck:
-      test: wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/settings/public || exit 1
-      <<: *default-healthcheck
-    <<: *default-logging
-
+  # Core acquisition
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
@@ -204,7 +118,8 @@ services:
       test: curl -f http://localhost:7879/ping || exit 1
       <<: *default-healthcheck
     <<: *default-logging
-
+  
+  # Supporting infrastructure
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
@@ -294,5 +209,92 @@ services:
 
     healthcheck:
       test: pgrep -f python || exit 1
+      <<: *default-healthcheck
+    <<: *default-logging
+  
+  # Media consumption
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    restart: unless-stopped
+    
+    volumes:
+      - ./jellyfin-config:/config
+      - ./jellyfin-cache:/cache
+      - ${MEDIA_PATH}:${MEDIA_PATH}
+    devices:
+      - /dev/dri:/dev/dri
+    
+    user: ${PUID}:${PGID}
+    group_add:
+      - "44"
+      - "992"
+    
+    ports:
+      - "8096:8096/tcp"
+      - "7359:7359/udp"
+      - "1900:1900/udp"
+    
+    environment:
+      <<: *common-env
+      JELLYFIN_PublishedServerUrl: ${JELLYFIN_URL}
+    
+    healthcheck:
+      test: curl -f http://localhost:8096/System/Info/Public || exit 1
+      <<: *default-healthcheck
+    <<: *default-logging
+
+  seerr:
+    image: ghcr.io/seerr-team/seerr:latest
+    container_name: seerr
+    restart: unless-stopped
+    init: true
+    depends_on:
+      jellyfin:
+        condition: service_healthy
+    
+    volumes:
+      - ./seerr-config:/app/config
+    
+    security_opt:
+      - no-new-privileges
+    cap_drop:
+      - ALL
+    
+    ports:
+      - "5055:5055"
+    
+    environment:
+      <<: *common-env
+      PORT: 5055
+    
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/settings/public || exit 1
+      <<: *default-healthcheck
+    <<: *default-logging
+
+  tunarr-anime:
+    image: chrisbenincasa/tunarr:latest
+    container_name: tunarr-anime
+    restart: unless-stopped
+    
+    volumes:
+      - ./tunarr-anime-config:/config/tunarr
+    devices:
+      - /dev/dri:/dev/dri
+    
+    group_add:
+      - "44"
+      - "992"
+    
+    ports:
+      - 8000:8000
+    
+    environment:
+      <<: *common-env
+      LOG_LEVEL: ${LOG_LEVEL}
+
+    healthcheck:
+      test: curl -f http://localhost:8000/api/version || exit 1
       <<: *default-healthcheck
     <<: *default-logging
