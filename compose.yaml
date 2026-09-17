@@ -261,8 +261,6 @@ services:
     image: chrisbenincasa/tunarr:latest
     container_name: tunarr
     restart: unless-stopped
-    profiles:
-      - tunarr
     
     volumes:
       - ./tunarr-config:/config/tunarr
@@ -275,6 +273,32 @@ services:
     
     ports:
       - 8000:8000
+    
+    environment:
+      <<: *common-env
+      LOG_LEVEL: ${LOG_LEVEL}
+
+    healthcheck:
+      test: curl -f http://localhost:8000/api/version || exit 1
+      <<: *default-healthcheck
+    <<: *default-logging
+
+  tunarr-anime:
+    image: chrisbenincasa/tunarr:latest
+    container_name: tunarr-anime
+    restart: unless-stopped
+    
+    volumes:
+      - ./tunarr-anime-config:/config/tunarr
+    devices:
+      - /dev/dri:/dev/dri
+    
+    group_add:
+      - "44"
+      - "992"
+    
+    ports:
+      - 8001:8000
     
     environment:
       <<: *common-env
