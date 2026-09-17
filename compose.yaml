@@ -9,7 +9,7 @@ x-logging: &default-logging
       max-size: "10m"
       max-file: "3"
 
-x-global-env: &global-env
+x-common-env: &common-env
   TZ: ${TZ}
   LOG_LEVEL: ${LOG_LEVEL}
 
@@ -61,7 +61,7 @@ services:
       - "1900:1900/udp"
     
     environment:
-      <<: *global-env
+      <<: *common-env
       JELLYFIN_PublishedServerUrl: ${JELLYFIN_URL}
     
     healthcheck:
@@ -87,7 +87,7 @@ services:
 #      - 8000:8000
 #    
 #    environment:
-#      <<: *global-env
+#      <<: *common-env
 #      LOG_LEVEL: ${LOG_LEVEL}
 #
 #    healthcheck:
@@ -116,7 +116,7 @@ services:
       - "5055:5055"
     
     environment:
-      <<: *global-env
+      <<: *common-env
       LOG_LEVEL: debug
       PORT: 5055
     
@@ -138,7 +138,7 @@ services:
       - "8989:8989"
     
     environment:
-      <<: [*global-env, *linuxserver-env]
+      <<: [*common-env, *linuxserver-env]
     
     healthcheck:
       test: curl -f http://localhost:8989/ping || exit 1
@@ -158,7 +158,7 @@ services:
       - "8990:8990"
     
     environment:
-      <<: [*global-env, *linuxserver-env]
+      <<: [*common-env, *linuxserver-env]
     
     healthcheck:
       test: curl -f http://localhost:8990/ping || exit 1
@@ -178,7 +178,7 @@ services:
       - "7878:7878"
     
     environment:
-      <<: [*global-env, *linuxserver-env]
+      <<: [*common-env, *linuxserver-env]
     
     healthcheck:
       test: curl -f http://localhost:7878/ping || exit 1
@@ -198,7 +198,7 @@ services:
       - "7879:7879"
     
     environment:
-      <<: [*global-env, *linuxserver-env]
+      <<: [*common-env, *linuxserver-env]
     
     healthcheck:
       test: curl -f http://localhost:7879/ping || exit 1
@@ -219,7 +219,7 @@ services:
       - "9696:9696"
     
     environment:
-      <<: [*global-env, *linuxserver-env]
+      <<: [*common-env, *linuxserver-env]
     
     healthcheck:
       test: curl -f http://localhost:9696/ping || exit 1
@@ -240,7 +240,7 @@ services:
       - "6868:6868"
     
     environment:
-      <<: [*global-env, *linuxserver-env]
+      <<: [*common-env, *linuxserver-env]
       ORIGIN: ${PROFILARR_ORIGIN}
     
     healthcheck:
@@ -259,7 +259,7 @@ services:
       - ${MEDIA_PATH}:${MEDIA_PATH}
     
     environment:
-      <<: [*global-env, *linuxserver-env]
+      <<: [*common-env, *linuxserver-env]
       TEST_RUN: "False"
       TIMER: 10
 
