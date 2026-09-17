@@ -63,6 +63,33 @@ services:
     healthcheck:
       test: curl -f http://localhost:8096/System/Info/Public || exit 1
       <<: *default-healthcheck
+    <<: *default-logging
+
+#  tunarr-anime:
+#    image: chrisbenincasa/tunarr:latest
+#    container_name: tunarr-anime
+#    restart: unless-stopped
+#    
+#    volumes:
+#      - ./tunarr-anime-config:/config/tunarr
+#    devices:
+#      - /dev/dri:/dev/dri
+#    
+#    group_add:
+#      - "44"
+#      - "992"
+#    
+#    ports:
+#      - 8000:8000
+#    
+#    environment:
+#      <<: *global-env
+#      LOG_LEVEL: ${LOG_LEVEL}
+#
+#    healthcheck:
+#      test: curl -f http://localhost:8000/api/version || exit 1
+#      <<: *default-healthcheck
+#    <<: *default-logging
 
   seerr:
     image: ghcr.io/seerr-team/seerr:latest
