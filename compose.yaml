@@ -290,6 +290,7 @@ services:
     
     volumes:
       - ./tunarr-anime-config:/config/tunarr
+      - ${MEDIA_PATH}:${MEDIA_PATH}
     devices:
       - /dev/dri:/dev/dri
     
