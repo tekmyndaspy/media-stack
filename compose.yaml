@@ -287,6 +287,8 @@ services:
     image: chrisbenincasa/tunarr:latest
     container_name: tunarr-anime
     restart: unless-stopped
+    profiles: 
+      - disabled
     
     volumes:
       - ./tunarr-anime-config:/config/tunarr
