@@ -240,6 +240,8 @@ services:
       - ./jellyfin-config:/config
       - ./jellyfin-cache:/cache
       - ${MEDIA_PATH}:${MEDIA_PATH}
+    tmpfs:
+      - /cache/transcodes:size=4G,mode=1777
     devices:
       - /dev/dri:/dev/dri
     
