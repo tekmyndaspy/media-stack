@@ -25,11 +25,19 @@ x-healthcheck-timing: &default-healthcheck
   timeout: 5s
   retries: 3
 
+x-gpu-passthrough: &gpu-passthrough
+  devices:
+    - /dev/dri:/dev/dri
+  group_add:
+    - "${VIDEO_GID:-44}"
+    - "${RENDER_GID:-992}"
+
 # Services
 
 services:
   # Upstream acquisition support
   prowlarr:
+    <<: [*default-logging]
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
     restart: unless-stopped
@@ -46,10 +54,10 @@ services:
     healthcheck:
       test: curl -f http://localhost:9696/ping || exit 1
       <<: *default-healthcheck
-    <<: *default-logging
 
   # Core acquisition
   sonarr:
+    <<: [*default-logging]
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
     restart: unless-stopped
@@ -68,9 +76,9 @@ services:
     healthcheck:
       test: curl -f http://localhost:8989/ping || exit 1
       <<: *default-healthcheck
-    <<: *default-logging
 
   sonarr4k:
+    <<: [*default-logging]
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr4k
     restart: unless-stopped
@@ -89,9 +97,9 @@ services:
     healthcheck:
       test: curl -f http://localhost:8990/ping || exit 1
       <<: *default-healthcheck
-    <<: *default-logging
 
   radarr:
+    <<: [*default-logging]
     image: lscr.io/linuxserver/radarr:latest
     container_name: radarr
     restart: unless-stopped
@@ -110,9 +118,9 @@ services:
     healthcheck:
       test: curl -f http://localhost:7878/ping || exit 1
       <<: *default-healthcheck
-    <<: *default-logging
 
   radarr4k:
+    <<: [*default-logging]
     image: lscr.io/linuxserver/radarr:latest
     container_name: radarr4k
     restart: unless-stopped
@@ -131,11 +139,11 @@ services:
     healthcheck:
       test: curl -f http://localhost:7879/ping || exit 1
       <<: *default-healthcheck
-    <<: *default-logging
 
   # Supporting acquisition services
 
   profilarr:
+    <<: [*default-logging]
     image: ghcr.io/dictionarry-hub/profilarr:latest
     container_name: profilarr
     restart: unless-stopped
@@ -153,9 +161,9 @@ services:
     healthcheck:
       test: curl -f http://localhost:6868/ || exit 1
       <<: *default-healthcheck
-    <<: *default-logging
 
   decluttarr:
+    <<: [*default-logging]
     image: ghcr.io/manimatter/decluttarr:latest
     container_name: decluttarr
     restart: unless-stopped
@@ -201,9 +209,9 @@ services:
     healthcheck:
       test: pgrep -f python || exit 1
       <<: *default-healthcheck
-    <<: *default-logging
 
   seerr:
+    <<: [*default-logging]
     image: ghcr.io/seerr-team/seerr:latest
     container_name: seerr
     restart: unless-stopped
@@ -227,10 +235,10 @@ services:
     healthcheck:
       test: wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/settings/public || exit 1
       <<: *default-healthcheck
-    <<: *default-logging
 
   # Media consumption
   jellyfin:
+    <<: [*default-logging, *gpu-passthrough]
     image: jellyfin/jellyfin:latest
     container_name: jellyfin
     restart: unless-stopped
@@ -242,13 +250,8 @@ services:
       - ${MEDIA_PATH}:${MEDIA_PATH}
     tmpfs:
       - /cache/transcodes:size=4G,mode=1777
-    devices:
-      - /dev/dri:/dev/dri
     
     user: ${PUID}:${PGID}
-    group_add:
-      - "${VIDEO_GID:-44}"
-      - "${RENDER_GID:-992}"
     
     ports:
       - "8096:8096/tcp"
@@ -262,9 +265,9 @@ services:
     healthcheck:
       test: curl -f http://localhost:8096/System/Info/Public || exit 1
       <<: *default-healthcheck
-    <<: *default-logging
 
   tunarr:
+    <<: [*default-logging, *gpu-passthrough]
     image: chrisbenincasa/tunarr:latest
     container_name: tunarr
     restart: unless-stopped
@@ -272,12 +275,6 @@ services:
     volumes:
       - ./tunarr-config:/config/tunarr
       - ${MEDIA_PATH}:${MEDIA_PATH}
-    devices:
-      - /dev/dri:/dev/dri
-    
-    group_add:
-      - "44"
-      - "992"
     
     ports:
       - 8000:8000
@@ -289,9 +286,9 @@ services:
     healthcheck:
       test: curl -f http://localhost:8000/api/version || exit 1
       <<: *default-healthcheck
-    <<: *default-logging
 
   tunarr-anime:
+    <<: [*default-logging, *gpu-passthrough]
     image: chrisbenincasa/tunarr:latest
     container_name: tunarr-anime
     restart: unless-stopped
@@ -301,12 +298,6 @@ services:
     volumes:
       - ./tunarr-anime-config:/config/tunarr
       - ${MEDIA_PATH}:${MEDIA_PATH}
-    devices:
-      - /dev/dri:/dev/dri
-    
-    group_add:
-      - "44"
-      - "992"
     
     ports:
       - 8001:8000
@@ -318,4 +309,3 @@ services:
     healthcheck:
       test: curl -f http://localhost:8000/api/version || exit 1
       <<: *default-healthcheck
-    <<: *default-logging
