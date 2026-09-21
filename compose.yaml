@@ -247,8 +247,8 @@ services:
     
     user: ${PUID}:${PGID}
     group_add:
-      - "44"
-      - "992"
+      - "${VIDEO_GID:-44}"
+      - "${RENDER_GID:-992}"
     
     ports:
       - "8096:8096/tcp"
