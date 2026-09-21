@@ -25,13 +25,6 @@ x-healthcheck-timing: &default-healthcheck
   timeout: 5s
   retries: 3
 
-x-gpu: &default-gpu
-  devices:
-    - /dev/dri:/dev/dri
-  group_add:
-    - "${VIDEO_GID:-44}"
-    - "${RENDER_GID:-992}"
-
 # Services
 
 services:
@@ -249,9 +242,13 @@ services:
       - ${MEDIA_PATH}:${MEDIA_PATH}
     tmpfs:
       - /cache/transcodes:size=4G,mode=1777
-    <<: *default-gpu
+    devices:
+      - /dev/dri:/dev/dri
     
     user: ${PUID}:${PGID}
+    group_add:
+      - "${VIDEO_GID:-44}"
+      - "${RENDER_GID:-992}"
     
     ports:
       - "8096:8096/tcp"
@@ -275,7 +272,12 @@ services:
     volumes:
       - ./tunarr-config:/config/tunarr
       - ${MEDIA_PATH}:${MEDIA_PATH}
-    <<: *default-gpu
+    devices:
+      - /dev/dri:/dev/dri
+    
+    group_add:
+      - "44"
+      - "992"
     
     ports:
       - 8000:8000
@@ -299,8 +301,13 @@ services:
     volumes:
       - ./tunarr-anime-config:/config/tunarr
       - ${MEDIA_PATH}:${MEDIA_PATH}
-    <<: *default-gpu
-
+    devices:
+      - /dev/dri:/dev/dri
+    
+    group_add:
+      - "44"
+      - "992"
+    
     ports:
       - 8001:8000
     
