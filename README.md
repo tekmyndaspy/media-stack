@@ -1,0 +1,1 @@
+this is a personal repo (though i'm publishing it in case others find it useful) to store my media stack compose file. it's pretty opinionated and based on my local environment. a lot of configuration is necessary to make it do much of anything.
