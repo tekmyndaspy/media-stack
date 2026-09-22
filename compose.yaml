@@ -175,7 +175,7 @@ services:
       <<: [*common-env, *linuxserver-env]
       LOG_LEVEL: INFO
       TEST_RUN: "False"
-      TIMER: 10
+      TIMER: 1
 
       SONARR: >
         - base_url: "http://sonarr:8989"
