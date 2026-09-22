@@ -202,8 +202,8 @@ services:
       REMOVE_SLOW: "True"
       REMOVE_STALLED: "True"
       REMOVE_UNMONITORED: "True"
-      SEARCH_UNMET_CUTOFF: "True"
-      SEARCH_MISSING: "True"
+      SEARCH_UNMET_CUTOFF: "False"
+      SEARCH_MISSING: "False"
       DETECT_DELETIONS: "True"
 
     healthcheck:
