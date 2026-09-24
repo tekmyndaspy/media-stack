@@ -175,7 +175,7 @@ services:
       <<: [*common-env, *linuxserver-env]
       LOG_LEVEL: INFO
       TEST_RUN: "False"
-      TIMER: 1
+      TIMER: 10
 
       SONARR: >
         - base_url: "http://sonarr:8989"
@@ -199,7 +199,7 @@ services:
       REMOVE_METADATA_MISSING: "True"
       REMOVE_MISSING_FILES: "True"
       REMOVE_ORPHANS: "True"
-      REMOVE_SLOW: "True"
+      REMOVE_SLOW: "False"
       REMOVE_STALLED: "True"
       REMOVE_UNMONITORED: "True"
       SEARCH_UNMET_CUTOFF: "False"
