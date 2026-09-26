@@ -265,3 +265,27 @@ services:
     healthcheck:
       test: curl -f http://localhost:8096/System/Info/Public || exit 1
       <<: *default-healthcheck
+
+  diun:
+    <<: [*default-logging]
+    image: crazymax/diun:latest
+    container_name: diun
+    command: serve
+    restart: unless-stopped
+    
+    volumes:
+      - ./diun-config:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    
+    environment:
+      <<: [*common-env]
+      DIUN_PROVIDERS_DOCKER: "true"
+      DIUN_PROVIDERS_DOCKER_WATCHBYDEFAULT: "true"
+      DIUN_WATCH_RUNONSTARTUP: "true"
+      DIUN_WATCH_SCHEDULE: "0 * * * *"
+      DIUN_WATCH_FIRSTCHECKNOTIF: "true"
+      DIUN_NOTIF_DISCORD_WEBHOOKURL: ${DISCORD_WEBHOOK_URL}
+    
+    healthcheck:
+      test: ["CMD", "diun", "healthcheck"]
+      <<: *default-healthcheck
