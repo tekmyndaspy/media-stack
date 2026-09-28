@@ -18,6 +18,11 @@ x-linuxserver-env: &linuxserver-env
   PGID: ${PGID}
   UMASK: ${UMASK}
 
+x-arr-env: &arr-env
+  SONARR__LOG__LEVEL: ${LOG_LEVEL}
+  RADARR__LOG__LEVEL: ${LOG_LEVEL}
+  PROWLARR__LOG__LEVEL: ${LOG_LEVEL}
+
 x-healthcheck-timing: &default-healthcheck
   start_period: 30s
   start_interval: 3s
@@ -49,7 +54,7 @@ services:
       - "9696:9696"
     
     environment:
-      <<: [*common-env, *linuxserver-env]
+      <<: [*common-env, *linuxserver-env, *arr-env]
     
     healthcheck:
       test: curl -f http://localhost:9696/ping || exit 1
@@ -71,7 +76,7 @@ services:
       - "8989:8989"
     
     environment:
-      <<: [*common-env, *linuxserver-env]
+      <<: [*common-env, *linuxserver-env, *arr-env]
     
     healthcheck:
       test: curl -f http://localhost:8989/ping || exit 1
@@ -92,7 +97,7 @@ services:
       - "8990:8990"
     
     environment:
-      <<: [*common-env, *linuxserver-env]
+      <<: [*common-env, *linuxserver-env, *arr-env]
     
     healthcheck:
       test: curl -f http://localhost:8990/ping || exit 1
@@ -113,7 +118,7 @@ services:
       - "7878:7878"
     
     environment:
-      <<: [*common-env, *linuxserver-env]
+      <<: [*common-env, *linuxserver-env, *arr-env]
     
     healthcheck:
       test: curl -f http://localhost:7878/ping || exit 1
@@ -134,7 +139,7 @@ services:
       - "7879:7879"
     
     environment:
-      <<: [*common-env, *linuxserver-env]
+      <<: [*common-env, *linuxserver-env, *arr-env]
     
     healthcheck:
       test: curl -f http://localhost:7879/ping || exit 1
@@ -173,7 +178,6 @@ services:
     
     environment:
       <<: [*common-env, *linuxserver-env]
-      LOG_LEVEL: INFO
       TEST_RUN: "False"
       TIMER: 10
 
