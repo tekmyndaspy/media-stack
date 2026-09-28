@@ -38,7 +38,7 @@ services:
   # Upstream acquisition support
   prowlarr:
     <<: [*default-logging]
-    image: lscr.io/linuxserver/prowlarr:latest
+    image: linuxserver/prowlarr:2.6.5
     container_name: prowlarr
     restart: unless-stopped
     
@@ -58,7 +58,7 @@ services:
   # Core acquisition
   sonarr:
     <<: [*default-logging]
-    image: lscr.io/linuxserver/sonarr:latest
+    image: linuxserver/sonarr:4.0.20
     container_name: sonarr
     restart: unless-stopped
     stop_grace_period: 30s
@@ -79,7 +79,7 @@ services:
 
   sonarr4k:
     <<: [*default-logging]
-    image: lscr.io/linuxserver/sonarr:latest
+    image: linuxserver/sonarr:4.0.20
     container_name: sonarr4k
     restart: unless-stopped
     stop_grace_period: 30s
@@ -100,7 +100,7 @@ services:
 
   radarr:
     <<: [*default-logging]
-    image: lscr.io/linuxserver/radarr:latest
+    image: linuxserver/radarr:6.4.4
     container_name: radarr
     restart: unless-stopped
     stop_grace_period: 30s
@@ -121,7 +121,7 @@ services:
 
   radarr4k:
     <<: [*default-logging]
-    image: lscr.io/linuxserver/radarr:latest
+    image: linuxserver/radarr:6.4.4
     container_name: radarr4k
     restart: unless-stopped
     stop_grace_period: 30s
@@ -144,7 +144,7 @@ services:
 
   profilarr:
     <<: [*default-logging]
-    image: ghcr.io/dictionarry-hub/profilarr:latest
+    image: ghcr.io/dictionarry-hub/profilarr:2.2.0
     container_name: profilarr
     restart: unless-stopped
     
@@ -164,7 +164,7 @@ services:
 
   decluttarr:
     <<: [*default-logging]
-    image: ghcr.io/manimatter/decluttarr:latest
+    image: ghcr.io/manimatter/decluttarr:v2.1.0
     container_name: decluttarr
     restart: unless-stopped
     
@@ -212,7 +212,7 @@ services:
 
   seerr:
     <<: [*default-logging]
-    image: ghcr.io/seerr-team/seerr:latest
+    image: seerr/seerr:v3.4.1
     container_name: seerr
     restart: unless-stopped
     init: true
@@ -239,7 +239,7 @@ services:
   # Media consumption
   jellyfin:
     <<: [*default-logging, *gpu-passthrough]
-    image: jellyfin/jellyfin:latest
+    image: jellyfin/jellyfin:12.1
     container_name: jellyfin
     restart: unless-stopped
     stop_grace_period: 30s
@@ -268,7 +268,7 @@ services:
 
   diun:
     <<: [*default-logging]
-    image: crazymax/diun:latest
+    image: crazymax/diun:4.33.0
     container_name: diun
     command: serve
     restart: unless-stopped
