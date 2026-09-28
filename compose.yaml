@@ -266,6 +266,7 @@ services:
       test: curl -f http://localhost:8096/System/Info/Public || exit 1
       <<: *default-healthcheck
 
+  # Notification services
   diun:
     <<: [*default-logging]
     image: crazymax/diun:latest
