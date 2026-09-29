@@ -199,7 +199,7 @@ services:
 
       REMOVE_BAD_FILES: "True"
       REMOVE_FAILED_DOWNLOADS: "True"
-      REMOVE_FAILED_IMPORTS: "False"
+      REMOVE_FAILED_IMPORTS: "True"
       REMOVE_METADATA_MISSING: "True"
       REMOVE_MISSING_FILES: "True"
       REMOVE_ORPHANS: "True"
