@@ -179,7 +179,7 @@ services:
     environment:
       <<: [*common-env, *linuxserver-env]
       TEST_RUN: "False"
-      TIMER: 10
+      TIMER: 20
 
       SONARR: >
         - base_url: "http://sonarr:8989"
