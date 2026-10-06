@@ -74,7 +74,6 @@ services:
       <<: [*common-env, *linuxserver-env]
       SONARR__LOG__LEVEL: ${LOG_LEVEL}
 
-    
     healthcheck:
       test: curl -f http://localhost:8989/ping || exit 1
       <<: *default-healthcheck
@@ -96,7 +95,6 @@ services:
     environment:
       <<: [*common-env, *linuxserver-env]
       SONARR__LOG__LEVEL: ${LOG_LEVEL}
-
     
     healthcheck:
       test: curl -f http://localhost:8990/ping || exit 1
@@ -141,7 +139,6 @@ services:
     environment:
       <<: [*common-env, *linuxserver-env]
       RADARR__LOG__LEVEL: ${LOG_LEVEL}
-
     
     healthcheck:
       test: curl -f http://localhost:7879/ping || exit 1
