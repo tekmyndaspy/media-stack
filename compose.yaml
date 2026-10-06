@@ -29,7 +29,6 @@ x-gpu-passthrough: &gpu-passthrough
   devices:
     - /dev/dri:/dev/dri
   group_add:
-    - "${VIDEO_GID:-44}"
     - "${RENDER_GID:-992}"
 
 # Services
