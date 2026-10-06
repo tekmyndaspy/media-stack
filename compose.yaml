@@ -144,6 +144,32 @@ services:
       test: curl -f http://localhost:7879/ping || exit 1
       <<: *default-healthcheck
 
+  # Media processing
+
+  fileflows:
+    <<: [*default-logging, *gpu-passthrough]
+    image: revenz/fileflows:stable
+    container_name: fileflows
+    restart: unless-stopped
+    
+    volumes:
+      - ./fileflows-data:/app/Data
+      - ./fileflows-logs:/app/Logs
+      - ./fileflows-temp:/temp
+      - ${MEDIA_PATH}:${MEDIA_PATH}
+    
+    ports:
+      - "5000:5000"
+    
+    environment:
+      <<: [*common-env]
+      PUID: ${PUID}
+      PGID: ${PGID}
+    
+    healthcheck:
+      test: curl -f http://localhost:8080/api/health || exit 1
+      <<: *default-healthcheck
+
   # Supporting acquisition services
 
   profilarr:
