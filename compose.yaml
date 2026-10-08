@@ -78,28 +78,6 @@ services:
       test: curl -f http://localhost:8989/ping || exit 1
       <<: *default-healthcheck
 
-  sonarr4k:
-    <<: [*default-logging]
-    image: linuxserver/sonarr:latest
-    container_name: sonarr4k
-    restart: unless-stopped
-    stop_grace_period: 30s
-    
-    volumes:
-      - ./sonarr4k-config:/config
-      - ${MEDIA_PATH}:${MEDIA_PATH}
-    
-    ports:
-      - "8990:8990"
-    
-    environment:
-      <<: [*common-env, *linuxserver-env]
-      SONARR__LOG__LEVEL: ${LOG_LEVEL}
-    
-    healthcheck:
-      test: curl -f http://localhost:8990/ping || exit 1
-      <<: *default-healthcheck
-
   radarr:
     <<: [*default-logging]
     image: linuxserver/radarr:latest
@@ -120,28 +98,6 @@ services:
     
     healthcheck:
       test: curl -f http://localhost:7878/ping || exit 1
-      <<: *default-healthcheck
-
-  radarr4k:
-    <<: [*default-logging]
-    image: linuxserver/radarr:latest
-    container_name: radarr4k
-    restart: unless-stopped
-    stop_grace_period: 30s
-    
-    volumes:
-      - ./radarr4k-config:/config
-      - ${MEDIA_PATH}:${MEDIA_PATH}
-    
-    ports:
-      - "7879:7879"
-    
-    environment:
-      <<: [*common-env, *linuxserver-env]
-      RADARR__LOG__LEVEL: ${LOG_LEVEL}
-    
-    healthcheck:
-      test: curl -f http://localhost:7879/ping || exit 1
       <<: *default-healthcheck
 
   # Media processing
@@ -209,13 +165,9 @@ services:
       SONARR: >
         - base_url: "http://sonarr:8989"
           api_key: "${SONARR_API_KEY}"
-        - base_url: "http://sonarr4k:8990"
-          api_key: "${SONARR4K_API_KEY}"
       RADARR: >
         - base_url: "http://radarr:7878"
           api_key: "${RADARR_API_KEY}"
-        - base_url: "http://radarr4k:7879"
-          api_key: "${RADARR4K_API_KEY}"
       QBITTORRENT: >
         - base_url: "${QBITTORRENT_URL}"
           username: "${QBITTORRENT_USER}"
