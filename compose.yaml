@@ -182,7 +182,7 @@ services:
       REMOVE_ORPHANS: "True"
       REMOVE_SLOW: "False"
       REMOVE_STALLED: "True"
-      REMOVE_UNMONITORED: "True"
+      REMOVE_UNMONITORED: "False"
       SEARCH_UNMET_CUTOFF: "False"
       SEARCH_MISSING: "False"
       DETECT_DELETIONS: "True"
