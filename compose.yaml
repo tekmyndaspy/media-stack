@@ -101,7 +101,7 @@ services:
 
   fileflows:
     <<: [*default-logging, *gpu-passthrough]
-    image: revenz/fileflows:stable
+    image: revenz/fileflows:latest
     container_name: fileflows
     restart: unless-stopped
     
