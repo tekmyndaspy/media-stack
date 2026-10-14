@@ -104,7 +104,7 @@ services:
     image: revenz/fileflows:latest
     container_name: fileflows
     restart: unless-stopped
-    
+
     volumes:
       - ./fileflows-data:/app/Data
       - ./fileflows-logs:/app/Logs
@@ -116,8 +116,6 @@ services:
     
     environment:
       <<: [*common-env]
-      PUID: ${PUID}
-      PGID: ${PGID}
     
     healthcheck:
       test: curl -f http://localhost:8080/api/health || exit 1
