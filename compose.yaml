@@ -88,7 +88,7 @@ services:
       - ${MEDIA_PATH}:${MEDIA_PATH}
     
     ports:
-      - "8990:8990"
+      - "8990:8989"
     
     environment:
       <<: [*common-env, *linuxserver-env]
@@ -131,7 +131,7 @@ services:
       - ${MEDIA_PATH}:${MEDIA_PATH}
     
     ports:
-      - "7879:7879"
+      - "7879:7878"
     
     environment:
       <<: [*common-env, *linuxserver-env]
